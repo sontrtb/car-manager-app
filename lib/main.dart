@@ -1,5 +1,16 @@
-import 'package:car_manager_app/mqtt-handler.dart';
+import 'package:car_manager_app/screens/auth/login.dart';
+import 'package:car_manager_app/screens/auth/register.dart';
+import 'package:car_manager_app/screens/auth/update_infor_user.dart';
+import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
+import 'package:car_manager_app/screens/car/car_detail.dart';
 import 'package:flutter/material.dart';
+
+final theme = ThemeData(
+  // useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color.fromARGB(255, 136, 249, 174),
+  ),
+);
 
 void main() {
   runApp(const MyApp());
@@ -10,62 +21,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyStatefulWidget(),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _count = 0;
-  MqttHandler mqttHandler = MqttHandler();
-
-  @override
-  void initState() {
-    super.initState();
-    mqttHandler.connect();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sample Code'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Data received:',
-                style: TextStyle(color: Colors.black, fontSize: 25)),
-            ValueListenableBuilder<String>(
-              builder: (BuildContext context, String value, Widget? child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text('$value',
-                        style: TextStyle(
-                            color: Colors.deepPurpleAccent, fontSize: 35))
-                  ],
-                );
-              },
-              valueListenable: mqttHandler.data,
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() => _count++),
-        tooltip: 'Increment Counter',
-        child: const Icon(Icons.add),
-      ),
+    return MaterialApp(
+      theme: theme,
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const Login(),
+        '/register': (context) => const Register(),
+        'update_infor_user': (context) => const UpdateInforUser(),
+        '/bottom_tab': (context) => const BottomTab(),
+        '/car_detail': (context) => const CarDetail(),
+      },
     );
   }
 }
