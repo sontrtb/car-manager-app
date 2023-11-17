@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
 
     // if (!context.mounted) return;
     final SharedPreferences prefs = await _prefs;
-    prefs.setString('role', "user");
+    prefs.setString('role', "admin");
     prefs.setString('token', "sd7sds8dsd7s8dsddsds9dsdsd");
 
     Navigator.pushNamedAndRemoveUntil(

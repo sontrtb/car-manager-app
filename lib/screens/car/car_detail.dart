@@ -26,12 +26,19 @@ class CarDetail extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Chi tiết xe"),
         ),
-        body: GoogleMap(
-          mapType: MapType.hybrid,
-          initialCameraPosition: _kGooglePlex,
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-          },
+        body: Column(
+          children: [
+            SizedBox(
+              height: 400,
+              child: GoogleMap(
+                mapType: MapType.hybrid,
+                initialCameraPosition: _kGooglePlex,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+              ),
+            ),
+          ],
         ));
   }
 }

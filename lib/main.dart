@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const Register(),
         'update_infor_user': (context) => const UpdateInforUser(),
         '/bottom_tab': (context) => const BottomTab(),
-        '/car_detail': (context) => const CarDetail(),
+        '/car_detail': (context) => CarDetail(),
       },
     );
   }
