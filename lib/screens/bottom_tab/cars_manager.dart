@@ -1,3 +1,5 @@
+import 'package:car_manager_app/models/car.dart';
+import 'package:car_manager_app/services/car.dart';
 import 'package:car_manager_app/widgets/button.dart';
 import 'package:car_manager_app/widgets/qr_scanner.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,23 @@ class CarsManager extends StatefulWidget {
 
 class _CarsManagerState extends State<CarsManager> {
   late String _idCarAdd;
+  List<Car> _cars = [];
 
-  void _handleRegisterCar() {
-    print("Call api...$_idCarAdd");
-    Navigator.pop(context);
+  Future<void> _handleRegisterCar() async {
+    final response = await CarApi().createCar(_idCarAdd);
+    if (response.errorCode == 0) {
+      setState(() {
+        _cars.insert(
+            0,
+            Car(
+              id: response.data["id"],
+              idCar: response.data["idCar"],
+            ));
+      });
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   void _openAddCar() {
@@ -92,14 +107,42 @@ class _CarsManagerState extends State<CarsManager> {
     );
   }
 
+  Future<void> _loadData() async {
+    final res = await CarApi().listCar();
+    final List<dynamic> initCars = res.data;
+    final List<Car> loadedCars = initCars
+        .map((e) => Car(
+              id: e["id"],
+              idCar: e["idCar"],
+              lat: e["lat"],
+              lon: e["lon"],
+              userId: e["userId"],
+              statusLock: e["statusLock"],
+              startUseTime: e["startUseTime"],
+              endUseTime: e["endUseTime"],
+            ))
+        .toList();
+
+    if (!mounted) return;
+    setState(() {
+      _cars = loadedCars;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          const Expanded(
-            child: ListCars(),
+          Expanded(
+            child: ListCars(cars: _cars),
           ),
           Padding(
             padding: const EdgeInsets.all(10),

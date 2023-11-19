@@ -1,9 +1,8 @@
-import 'dart:convert';
-import 'package:car_manager_app/config/config.dart';
+import 'package:car_manager_app/models/user.dart';
 import 'package:car_manager_app/screens/auth/register.dart';
+import 'package:car_manager_app/services/auth.dart';
 import 'package:car_manager_app/widgets/button.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -28,30 +27,29 @@ class _LoginState extends State<Login> {
     setState(() {
       _isSending = true;
     });
-    final urlLogin = Uri.https(Config().apiUrl, '/api/v1/auth/login');
-    final response = await http.post(
-      urlLogin,
-      body: jsonEncode(
-        {
-          'userName': userName,
-          'password': password,
-        },
+
+    final responseLogin = await AuthApi().login(
+      BodyLogin(
+        password: password,
+        userName: userName,
       ),
     );
+
     setState(() {
       _isSending = false;
     });
 
-    // final Map<String, dynamic> dataLogin = jsonDecode(response.body);
-    // print('Response status: ${dataLogin}');
+    if (responseLogin.data != null) {
+      UserLogin userLogin = UserLogin.fromJson(responseLogin.data);
+      final SharedPreferences prefs = await _prefs;
+      prefs.setString('role', userLogin.user.role.name);
+      prefs.setString('token', userLogin.token);
 
-    // if (!context.mounted) return;
-    final SharedPreferences prefs = await _prefs;
-    prefs.setString('role', "admin");
-    prefs.setString('token', "sd7sds8dsd7s8dsddsds9dsdsd");
-
-    Navigator.pushNamedAndRemoveUntil(
-        context, '/bottom_tab', (Route<dynamic> route) => false);
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/bottom_tab', (Route<dynamic> route) => false);
+      }
+    }
   }
 
   void _goToRegister(context) {
@@ -96,7 +94,7 @@ class _LoginState extends State<Login> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
-                      obscureText: true,
+                      // obscureText: true,
                       decoration: const InputDecoration(
                         label: Text("Mật khẩu"),
                       ),
@@ -128,6 +126,7 @@ class _LoginState extends State<Login> {
                         _handleLogin(context);
                       },
                       isFullWidth: true,
+                      isLoading: _isSending,
                     ),
                   ],
                 ),
