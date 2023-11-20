@@ -3,10 +3,11 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class MqttHandler with ChangeNotifier {
-  final ValueNotifier<String> data = ValueNotifier<String>("");
-  late MqttServerClient client;
+  MqttHandler({required this.topic, this.onMessage});
 
-  String topic = 'abcabc';
+  late MqttServerClient client;
+  late void Function(String mess)? onMessage;
+  String topic;
 
   Future<Object> connect() async {
     client = MqttServerClient.withPort(
@@ -51,8 +52,9 @@ class MqttHandler with ChangeNotifier {
       final recMess = c![0].payload as MqttPublishMessage;
       final pt =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-
-      data.value = pt;
+      if (onMessage != null) {
+        onMessage!(pt);
+      }
       notifyListeners();
     });
 

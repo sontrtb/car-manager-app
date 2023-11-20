@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Car {
   Car({
     required this.id,
@@ -12,12 +10,22 @@ class Car {
     this.userId,
   });
 
-  final int id;
-  final String idCar;
-  late String? lat;
-  late String? lon;
+  late int id;
+  late String idCar;
+  late double? lat;
+  late double? lon;
   late int? userId;
   late bool? statusLock;
   late DateTime? startUseTime;
   late DateTime? endUseTime;
+
+  factory Car.fromJson(Map<String, dynamic> json) {
+    return Car(
+      id: json['id'],
+      lat: json['lat'],
+      lon: json['lon'],
+      idCar: json['idCar'],
+      statusLock: json['statusLock'],
+    );
+  }
 }
