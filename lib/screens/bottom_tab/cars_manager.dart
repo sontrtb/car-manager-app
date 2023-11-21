@@ -17,28 +17,20 @@ class _CarsManagerState extends State<CarsManager> {
   List<Car> _cars = [];
 
   Future<void> _handleRegisterCar() async {
-    setState(() {
-      _cars.insert(
-          0,
-          Car(
-            id: 4,
-            idCar: "jhhjhhj787yuy8y",
-          ));
-    });
-    // final response = await CarApi().createCar(_idCarAdd);
-    // if (response.errorCode == 0) {
-    //   setState(() {
-    //     _cars.insert(
-    //         0,
-    //         Car(
-    //           id: response.data["id"],
-    //           idCar: response.data["idCar"],
-    //         ));
-    //   });
-    //   if (context.mounted) {
-    //     Navigator.pop(context);
-    //   }
-    // }
+    final response = await CarApi().createCar(_idCarAdd);
+    if (response.errorCode == 0) {
+      setState(() {
+        _cars.insert(
+            0,
+            Car(
+              id: response.data["id"],
+              idCar: response.data["idCar"],
+            ));
+      });
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   void _openAddCar() {
@@ -140,7 +132,7 @@ class _CarsManagerState extends State<CarsManager> {
   @override
   void initState() {
     super.initState();
-    // _loadData();
+    _loadData();
   }
 
   @override

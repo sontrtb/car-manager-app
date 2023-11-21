@@ -12,7 +12,11 @@ class ListCarsItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/car_detail');
+          Navigator.pushNamed(
+            context,
+            '/car_detail',
+            arguments: CarDetailArguments(car),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -25,7 +29,7 @@ class ListCarsItem extends StatelessWidget {
               const Row(
                 children: [
                   Icon(Icons.lock),
-                  const SizedBox(
+                  SizedBox(
                     width: 10,
                   ),
                   Text("Bị khoá"),

@@ -9,6 +9,13 @@ class CarApi {
     return response;
   }
 
+  Future<ResponseApi> carDetail(int id) async {
+    ResponseApi response = await RootApi().get(
+      "/car/$id",
+    );
+    return response;
+  }
+
   Future<ResponseApi> createCar(String idCar) async {
     ResponseApi response = await RootApi().post(
       "/car/create",

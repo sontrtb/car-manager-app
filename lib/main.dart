@@ -1,3 +1,4 @@
+import 'package:car_manager_app/models/car.dart';
 import 'package:car_manager_app/screens/auth/login.dart';
 import 'package:car_manager_app/screens/auth/register.dart';
 import 'package:car_manager_app/screens/auth/update_infor_user.dart';
@@ -29,7 +30,18 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const Register(),
         'update_infor_user': (context) => const UpdateInforUser(),
         '/bottom_tab': (context) => const BottomTab(),
-        '/car_detail': (context) => CarDetail(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == CarDetail.routeName) {
+          final args = settings.arguments as CarDetailArguments;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return CarDetail(initCar: args.car);
+            },
+          );
+        }
+        return null;
       },
     );
   }
