@@ -26,21 +26,30 @@ class RootApi {
 
   // get
   Future<dynamic> get(String api) async {
-    final url = Uri.parse(Config().apiUrl + api);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    try {
+      final url = Uri.parse(Config().apiUrl + api);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      var response = await client
+          .get(
+            url,
+            headers: _header(token),
+          )
+          .timeout(const Duration(seconds: 5));
 
-    var response = await client.get(
-      url,
-      headers: _header(token),
-    );
-
-    final ResponseApi responseApi = ResponseApi.fromJson(response.body);
-    if (responseApi.errorCode == 1) {
-      _handleError(responseApi.mess);
+      final ResponseApi responseApi = ResponseApi.fromJson(response.body);
+      if (responseApi.errorCode == 1) {
+        _handleError(responseApi.mess);
+      }
+      return responseApi;
+    } catch (e) {
+      const responseError = ResponseApi(
+        errorCode: 1,
+        mess: 'Có lỗi xảy xa',
+      );
+      _handleError(responseError.mess);
+      return responseError;
     }
-
-    return responseApi;
   }
 
   // post

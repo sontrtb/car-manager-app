@@ -5,6 +5,7 @@ import 'package:car_manager_app/screens/auth/update_infor_user.dart';
 import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
 import 'package:car_manager_app/screens/car/car_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 final theme = ThemeData(
   // useMaterial3: true,
@@ -14,6 +15,8 @@ final theme = ThemeData(
 );
 
 void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
 

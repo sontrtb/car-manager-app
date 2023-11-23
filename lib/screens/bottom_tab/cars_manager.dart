@@ -15,6 +15,7 @@ class CarsManager extends StatefulWidget {
 class _CarsManagerState extends State<CarsManager> {
   late String _idCarAdd;
   List<Car> _cars = [];
+  bool _loadingListCar = false;
 
   Future<void> _handleRegisterCar() async {
     final response = await CarApi().createCar(_idCarAdd);
@@ -108,8 +109,11 @@ class _CarsManagerState extends State<CarsManager> {
   }
 
   Future<void> _loadData() async {
+    setState(() {
+      _loadingListCar = true;
+    });
     final res = await CarApi().listCar();
-    final List<dynamic> initCars = res.data;
+    final List<dynamic> initCars = res.data ?? [];
     final List<Car> loadedCars = initCars
         .map((e) => Car(
               id: e["id"],
@@ -126,17 +130,27 @@ class _CarsManagerState extends State<CarsManager> {
     if (!mounted) return;
     setState(() {
       _cars = loadedCars;
+      _loadingListCar = false;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loadingListCar) {
+      return const Center(
+          child: SizedBox(
+        width: 30,
+        height: 30,
+        child: CircularProgressIndicator(),
+      ));
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(

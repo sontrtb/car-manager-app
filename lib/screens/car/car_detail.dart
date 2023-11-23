@@ -61,9 +61,11 @@ class _CarDetailState extends State<CarDetail> {
 
   Future<void> _loadData() async {
     final res = await CarApi().carDetail(widget.initCar.id);
-    setState(() {
-      car = Car.fromJson(res.data);
-    });
+    if (res.data != null) {
+      setState(() {
+        car = Car.fromJson(res.data);
+      });
+    }
   }
 
   @override
