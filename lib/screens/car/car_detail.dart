@@ -88,7 +88,7 @@ class _CarDetailState extends State<CarDetail> {
         body: Column(
           children: [
             SizedBox(
-              height: height - 500,
+              height: height - 550,
               child: GoogleMap(
                 markers: markers.values.toSet(),
                 myLocationButtonEnabled: true,
@@ -193,10 +193,22 @@ class _CarDetailState extends State<CarDetail> {
                             : const SizedBox()
                       ],
                     ),
-                    ElevatedButtonWidget(
-                      isFullWidth: true,
-                      text: "Khoá xe",
-                      onPressed: () {},
+                    Column(
+                      children: [
+                        OutlinedButtonWidget(
+                          isFullWidth: true,
+                          text: "Khoá xe",
+                          onPressed: () {},
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButtonWidget(
+                          isFullWidth: true,
+                          text: "Kết thúc chuyến đi",
+                          onPressed: () {},
+                        )
+                      ],
                     )
                   ],
                 ),

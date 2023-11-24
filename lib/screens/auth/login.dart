@@ -2,6 +2,7 @@ import 'package:car_manager_app/models/user.dart';
 import 'package:car_manager_app/screens/auth/register.dart';
 import 'package:car_manager_app/services/auth.dart';
 import 'package:car_manager_app/widgets/button.dart';
+import 'package:car_manager_app/widgets/gradient_container.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,78 +61,86 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: GradientContainer.defaultColor(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Đăng nhập",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
+          child: Container(
+            height: 350,
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Đăng nhập",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        label: Text("Tên tài khoản"),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Tên tài khoản không được để trống";
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => {
-                        userName = newValue!,
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      // obscureText: true,
-                      decoration: const InputDecoration(
-                        label: Text("Mật khẩu"),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Mật khẩu không được để trống";
-                        }
-                        return null;
-                      },
-                      onSaved: (newValue) => {
-                        password = newValue!,
-                      },
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text("Chưa có tài khoản ? "),
-                        TextButton(
-                          onPressed: () {
-                            _goToRegister(context);
-                          },
-                          child: const Text("Đăng ký"),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          label: Text("Tên tài khoản"),
                         ),
-                      ],
-                    ),
-                    ElevatedButtonWidget(
-                      text: "Đăng nhập",
-                      onPressed: () {
-                        _handleLogin(context);
-                      },
-                      isFullWidth: true,
-                      isLoading: _isSending,
-                    ),
-                  ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Tên tài khoản không được để trống";
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) => {
+                          userName = newValue!,
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        // obscureText: true,
+                        decoration: const InputDecoration(
+                          label: Text("Mật khẩu"),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Mật khẩu không được để trống";
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) => {
+                          password = newValue!,
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text("Chưa có tài khoản ? "),
+                          TextButton(
+                            onPressed: () {
+                              _goToRegister(context);
+                            },
+                            child: const Text("Đăng ký"),
+                          ),
+                        ],
+                      ),
+                      ElevatedButtonWidget(
+                        text: "Đăng nhập",
+                        onPressed: () {
+                          _handleLogin(context);
+                        },
+                        isFullWidth: true,
+                        isLoading: _isSending,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
+import 'package:car_manager_app/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 class UpdateInforUser extends StatefulWidget {
@@ -50,7 +51,7 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                     children: [
                       TextFormField(
                         decoration: const InputDecoration(
-                          label: Text("Tên tài khoản"),
+                          label: Text("Tên"),
                         ),
                         onSaved: (newValue) => {
                           userName = newValue!,
@@ -58,9 +59,17 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        obscureText: true,
                         decoration: const InputDecoration(
-                          label: Text("Mật khẩu"),
+                          label: Text("Số điện thoại"),
+                        ),
+                        onSaved: (newValue) => {
+                          password = newValue!,
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          label: Text("Địa chỉ"),
                         ),
                         onSaved: (newValue) => {
                           password = newValue!,
@@ -71,14 +80,12 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                 ),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  _handleUpdateInfor(context);
-                },
-                child: const Text("Cập nhật thông tin"),
-              ),
+            ElevatedButtonWidget(
+              isFullWidth: true,
+              onPressed: () {
+                _handleUpdateInfor(context);
+              },
+              text: "Cập nhật thông tin",
             ),
           ],
         ),
