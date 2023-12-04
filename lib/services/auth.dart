@@ -21,4 +21,13 @@ class AuthApi {
 
     return response;
   }
+
+  Future<ResponseApi> register(BodyLogin body) async {
+    ResponseApi response = await RootApi().post(
+      "/auth/register",
+      body.toMap(),
+    );
+
+    return response;
+  }
 }

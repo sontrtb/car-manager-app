@@ -33,29 +33,29 @@ class _CarDetailState extends State<CarDetail> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  late MqttHandler mqttHandler;
+  // late MqttHandler mqttHandler;
 
   Future<void> _handleMessageMqtt(String mess) async {
     Map<String, dynamic> response = jsonDecode(mess);
+
+    final marker = Marker(
+      markerId: MarkerId(car.idCar),
+      position: LatLng(response['lat'], response['lon']),
+      icon: await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(
+            size: Size(15, 15),
+          ),
+          "assets/images/icon_car.png"),
+    );
 
     setState(() {
       if (response['statusLock'] != null) {
         car.statusLock = response['statusLock'].toString() == "true";
       }
 
-      // if() {
-      //     final marker = Marker(
-      //   markerId: MarkerId(carUpdate.idCar),
-      //   position: LatLng(carUpdate.lat!, carUpdate.lon!),
-      //   icon: await BitmapDescriptor.fromAssetImage(
-      //       const ImageConfiguration(
-      //         size: Size(15, 15),
-      //       ),
-      //       "assets/images/icon_car.png"),
-      // );
-
-      //     markers[MarkerId(car.idCar)] = marker;
-      // }
+      if (response['lat'] != null && response['lon'] != null) {
+        markers[MarkerId(car.idCar)] = marker;
+      }
     });
   }
 
@@ -70,11 +70,11 @@ class _CarDetailState extends State<CarDetail> {
 
   @override
   void initState() {
-    mqttHandler =
-        MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
-    _loadData();
-    mqttHandler.connect();
-    super.initState();
+    // mqttHandler =
+    //     MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
+    // _loadData();
+    // mqttHandler.connect();
+    // super.initState();
   }
 
   @override

@@ -1,15 +1,15 @@
 import 'package:car_manager_app/models/car.dart';
+import 'package:car_manager_app/models/user.dart';
 import 'package:car_manager_app/screens/auth/login.dart';
 import 'package:car_manager_app/screens/auth/register.dart';
 import 'package:car_manager_app/screens/auth/update_infor_user.dart';
 import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
 import 'package:car_manager_app/screens/car/car_detail.dart';
 import 'package:car_manager_app/screens/car/map_all_car.dart';
+import 'package:car_manager_app/user/user_detail.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 final theme = ThemeData(
-  // useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     primary: const Color.fromRGBO(121, 122, 236, 1),
     seedColor: const Color.fromRGBO(121, 122, 236, 1),
@@ -17,8 +17,6 @@ final theme = ThemeData(
 );
 
 void main() {
-  // WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
 
@@ -35,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const Register(),
         'update_infor_user': (context) => const UpdateInforUser(),
         '/bottom_tab': (context) => const BottomTab(),
-        '/map_all_car': (context) => const MapAllCar(),
+        '/all_car': (context) => const MapAllCar(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == CarDetail.routeName) {
@@ -44,6 +42,15 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) {
               return CarDetail(initCar: args.car);
+            },
+          );
+        }
+        if (settings.name == UserDetail.routeName) {
+          final args = settings.arguments as UserDetailArguments;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return UserDetail(user: args.user);
             },
           );
         }

@@ -43,24 +43,29 @@ class HomeUser extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Xin chao!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(
-                      "Pham Hong Son",
-                      style: TextStyle(
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, "update_infor_user");
+                  },
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Xin chao!",
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(
+                        "Pham Hong Son",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
                 IconButton(
                     onPressed: () {
@@ -104,7 +109,7 @@ class HomeUser extends StatelessWidget {
                       color: Color.fromARGB(255, 129, 145, 173),
                     ),
                     action: () {
-                      Navigator.pushNamed(context, "/map_all_car");
+                      Navigator.pushNamed(context, "/all_car");
                     },
                   ),
                 ],

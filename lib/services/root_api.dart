@@ -71,4 +71,24 @@ class RootApi {
 
     return responseApi;
   }
+
+  // patch
+  Future<ResponseApi> patch(String api, Map<String, dynamic> body) async {
+    final url = Uri.parse(Config().apiUrl + api);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var response = await client.patch(
+      url,
+      headers: _header(token),
+      body: jsonEncode(body),
+    );
+
+    final ResponseApi responseApi = ResponseApi.fromJson(response.body);
+    if (responseApi.errorCode == 1) {
+      _handleError(responseApi.mess);
+    }
+
+    return responseApi;
+  }
 }

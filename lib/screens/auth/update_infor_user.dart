@@ -1,4 +1,5 @@
 import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
+import 'package:car_manager_app/services/user.dart';
 import 'package:car_manager_app/widgets/button.dart';
 import 'package:flutter/material.dart';
 
@@ -11,18 +12,36 @@ class UpdateInforUser extends StatefulWidget {
 
 class _UpdateInforUserState extends State<UpdateInforUser> {
   final _formKey = GlobalKey<FormState>();
+  bool _isSending = false;
+  late String? name;
+  late String? phoneNumber;
+  late String? address;
 
-  late String userName;
+  Future<void> _handleUpdateInfor(context) async {
+    _formKey.currentState!.save();
 
-  late String password;
+    setState(() {
+      _isSending = true;
+    });
 
-  void _handleUpdateInfor(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => const BottomTab(),
-      ),
-    );
+    UserApi()
+        .update(
+          UpdateUserLogin(
+              name: name, phoneNumber: phoneNumber, address: address),
+        )
+        .then(
+          (value) => {
+            setState(() {
+              _isSending = false;
+            }),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => const BottomTab(),
+              ),
+            )
+          },
+        );
   }
 
   @override
@@ -54,7 +73,7 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                           label: Text("Tên"),
                         ),
                         onSaved: (newValue) => {
-                          userName = newValue!,
+                          name = newValue,
                         },
                       ),
                       const SizedBox(height: 10),
@@ -63,7 +82,7 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                           label: Text("Số điện thoại"),
                         ),
                         onSaved: (newValue) => {
-                          password = newValue!,
+                          phoneNumber = newValue,
                         },
                       ),
                       const SizedBox(height: 10),
@@ -72,7 +91,7 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
                           label: Text("Địa chỉ"),
                         ),
                         onSaved: (newValue) => {
-                          password = newValue!,
+                          address = newValue,
                         },
                       ),
                     ],
@@ -81,6 +100,7 @@ class _UpdateInforUserState extends State<UpdateInforUser> {
               ],
             ),
             ElevatedButtonWidget(
+              isLoading: _isSending,
               isFullWidth: true,
               onPressed: () {
                 _handleUpdateInfor(context);

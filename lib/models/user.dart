@@ -8,6 +8,7 @@ class User {
     required this.amountOfMoney,
     this.phoneNumber,
     required this.userName,
+    this.address,
   });
 
   final int id;
@@ -16,6 +17,19 @@ class User {
   final String userName;
   final String? phoneNumber;
   final int amountOfMoney;
+  final String? address;
+
+  factory User.fromJson(Map<String, dynamic> userMap) {
+    return User(
+      id: userMap["id"],
+      role: userMap["role"] == "admin" ? Role.admin : Role.user,
+      amountOfMoney: userMap["amountOfMoney"],
+      name: userMap["name"],
+      address: userMap["address"],
+      phoneNumber: userMap["phoneNumber"],
+      userName: userMap["userName"],
+    );
+  }
 }
 
 class UserLogin {
@@ -34,9 +48,16 @@ class UserLogin {
         role: userMap["role"] == "admin" ? Role.admin : Role.user,
         amountOfMoney: userMap["amountOfMoney"],
         name: userMap["name"],
+        address: userMap["address"],
         phoneNumber: userMap["phoneNumber"],
         userName: userMap["userName"],
       ),
     );
   }
+}
+
+class UserDetailArguments {
+  final User user;
+
+  UserDetailArguments(this.user);
 }

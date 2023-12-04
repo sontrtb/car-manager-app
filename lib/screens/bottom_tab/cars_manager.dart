@@ -137,7 +137,7 @@ class _CarsManagerState extends State<CarsManager> {
   @override
   void initState() {
     super.initState();
-    // _loadData();
+    _loadData();
   }
 
   @override

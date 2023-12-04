@@ -1,3 +1,4 @@
+import 'package:car_manager_app/screens/auth/login.dart';
 import 'package:car_manager_app/screens/home/home_user.dart';
 import 'package:car_manager_app/screens/bottom_tab/widgets/bottom_tab_admin.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,12 @@ class BottomTab extends StatefulWidget {
 }
 
 class _BottomTabState extends State<BottomTab> {
-  String role = "user";
+  String? role;
 
   Future<void> _loadRoleUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      role = prefs.getString('role') ?? "user";
+      role = prefs.getString('role');
     });
   }
 
@@ -30,8 +31,9 @@ class _BottomTabState extends State<BottomTab> {
   Widget build(BuildContext context) {
     if (role == "admin") {
       return const BottomTabAdmin();
+    } else if (role == "user") {
+      return const HomeUser();
     }
-
-    return const HomeUser();
+    return const Login();
   }
 }
