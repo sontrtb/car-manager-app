@@ -6,6 +6,7 @@ import 'package:car_manager_app/screens/auth/update_infor_user.dart';
 import 'package:car_manager_app/screens/bottom_tab/bottom_tab.dart';
 import 'package:car_manager_app/screens/car/car_detail.dart';
 import 'package:car_manager_app/screens/car/map_all_car.dart';
+import 'package:car_manager_app/screens/pay/pay.dart';
 import 'package:car_manager_app/user/user_detail.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +46,16 @@ class MyApp extends StatelessWidget {
             },
           );
         }
+        if (settings.name == Pay.routeName) {
+          final args = settings.arguments as CarDetailArguments;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return Pay(car: args.car);
+            },
+          );
+        }
+
         if (settings.name == UserDetail.routeName) {
           final args = settings.arguments as UserDetailArguments;
 

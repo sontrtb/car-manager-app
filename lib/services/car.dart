@@ -16,6 +16,17 @@ class CarApi {
     return response;
   }
 
+  Future<ResponseApi> updateCar(String idCar, int? userId) async {
+    ResponseApi response =
+        await RootApi().patch("/car/update/$idCar", {"userId": userId});
+    return response;
+  }
+
+  Future<ResponseApi> lockCar(String idCar) async {
+    ResponseApi response = await RootApi().patch("/car/lockCar/$idCar", {});
+    return response;
+  }
+
   Future<ResponseApi> createCar(String idCar) async {
     ResponseApi response = await RootApi().post(
       "/car/create",

@@ -1,42 +1,16 @@
-import 'dart:convert';
-
 import 'package:car_manager_app/widgets/button.dart';
-import 'package:car_manager_app/widgets/mqtt_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final Uri _urlPhone = Uri.parse('tel://21213123123');
+final Uri _urlPhone = Uri.parse('tel://0355677825');
 final f = NumberFormat("###,###.###", "tr_TR");
 
-class Money extends StatefulWidget {
-  const Money({super.key});
+// ignore: must_be_immutable
+class Money extends StatelessWidget {
+  const Money({super.key, required this.money});
 
-  @override
-  State<Money> createState() => _MoneyState();
-}
-
-class _MoneyState extends State<Money> {
-  // late MqttHandler mqttHandler;
-  String moneyCurrent = "90000";
-
-  Future<void> _handleMessageMqtt(String mess) async {
-    Map<String, dynamic> response = jsonDecode(mess);
-    setState(() {
-      moneyCurrent = f.format(response["money"]).toString();
-    });
-  }
-
-  void _loadData() {}
-
-  @override
-  void initState() {
-    // mqttHandler =
-    //     MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
-    // mqttHandler.connect();
-    _loadData();
-    super.initState();
-  }
+  final int money;
 
   void _openRecharge(BuildContext context) {
     showModalBottomSheet(
@@ -52,6 +26,10 @@ class _MoneyState extends State<Money> {
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            Image.network(
+              "https://cdn-icons-png.flaticon.com/512/3410/3410491.png",
+              width: 200,
             ),
             ElevatedButtonWidget(
               isFullWidth: true,
@@ -86,7 +64,7 @@ class _MoneyState extends State<Money> {
                 height: 5,
               ),
               Text(
-                moneyCurrent,
+                f.format(money),
                 style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.w900,

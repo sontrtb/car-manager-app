@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:car_manager_app/widgets/mqtt_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -21,27 +23,35 @@ class _MapAllCarState extends State<MapAllCar> {
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
-  void _loadData() async {
+  Future<void> _handleMessageMqtt(String mess) async {
+    if (!mounted) return;
+
+    Map<String, dynamic> response = jsonDecode(mess);
+
     final marker = Marker(
-        markerId: MarkerId("ssdsd"),
-        position: LatLng(20.9800909, 105.7853924),
-        icon: await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(
-              size: Size(15, 15),
-            ),
-            "assets/images/icon_car.png"),
-        infoWindow: InfoWindow(
-          title: "Mã xe: ssas8sa8s8",
-          snippet: "Trạng thái: Rảnh",
-        ));
+      markerId: MarkerId(response["idCar"]),
+      position: LatLng(response['lat'], response['lon']),
+      icon: await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(
+            size: Size(15, 15),
+          ),
+          "assets/images/icon_car.png"),
+    );
+
     setState(() {
-      markers = {MarkerId("ssdsd"): marker};
+      if (response['lat'] != null &&
+          response['lon'] != null &&
+          response["idCar"] != null) {
+        markers[MarkerId(response["idCar"])] = marker;
+      }
     });
   }
 
   @override
   void initState() {
-    _loadData();
+    MqttHandler mqttHandler =
+        MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
+    mqttHandler.connect();
     super.initState();
   }
 
@@ -49,7 +59,7 @@ class _MapAllCarState extends State<MapAllCar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Các xe chờ"),
+        title: const Text("Danh sách xe"),
       ),
       body: GoogleMap(
         markers: markers.values.toSet(),

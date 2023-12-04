@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:car_manager_app/models/car.dart';
 import 'package:car_manager_app/services/car.dart';
+import 'package:car_manager_app/utils/format.dart';
 import 'package:car_manager_app/widgets/button.dart';
 import 'package:car_manager_app/widgets/mqtt_handler.dart';
 import 'package:flutter/material.dart';
@@ -28,19 +29,23 @@ class CarDetail extends StatefulWidget {
 
 class _CarDetailState extends State<CarDetail> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  late Car car = widget.initCar;
+  late Car? car;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  // late MqttHandler mqttHandler;
-
   Future<void> _handleMessageMqtt(String mess) async {
+    if (car == null || car?.idCar == null || !mounted) return;
+
     Map<String, dynamic> response = jsonDecode(mess);
 
+    Car newCar = Car.fromJson(response);
+
+    if (response["idCar"] != car?.idCar) return;
+
     final marker = Marker(
-      markerId: MarkerId(car.idCar),
-      position: LatLng(response['lat'], response['lon']),
+      markerId: MarkerId(car!.idCar),
+      position: LatLng(response['lat'] ?? 0, response['lon'] ?? 0),
       icon: await BitmapDescriptor.fromAssetImage(
           const ImageConfiguration(
             size: Size(15, 15),
@@ -50,31 +55,49 @@ class _CarDetailState extends State<CarDetail> {
 
     setState(() {
       if (response['statusLock'] != null) {
-        car.statusLock = response['statusLock'].toString() == "true";
+        car?.statusLock = response['statusLock'].toString() == "true";
       }
-
+      if (response['startUseTime'] != null) {
+        car?.startUseTime = newCar.startUseTime;
+      }
+      // if (response["userData"] != null) {
+      //   car?.userData = newCar.userData;
+      // }
       if (response['lat'] != null && response['lon'] != null) {
-        markers[MarkerId(car.idCar)] = marker;
+        markers[MarkerId(car!.idCar)] = marker;
       }
     });
   }
 
   Future<void> _loadData() async {
-    final res = await CarApi().carDetail(widget.initCar.id);
-    if (res.data != null) {
-      setState(() {
-        car = Car.fromJson(res.data);
-      });
+    setState(() {
+      car = widget.initCar;
+    });
+  }
+
+  void _handleLock() {
+    CarApi().lockCar(car!.idCar);
+  }
+
+  Future<void> _handleEnd() async {
+    final newCarRes = await CarApi().updateCar(car!.idCar, null);
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        'pay',
+        (Route<dynamic> route) => false,
+        arguments: CarDetailArguments(Car.fromJson(newCarRes.data)),
+      );
     }
   }
 
   @override
   void initState() {
-    // mqttHandler =
-    //     MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
-    // _loadData();
-    // mqttHandler.connect();
-    // super.initState();
+    MqttHandler mqttHandler =
+        MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
+    _loadData();
+    mqttHandler.connect();
+    super.initState();
   }
 
   @override
@@ -122,7 +145,7 @@ class _CarDetailState extends State<CarDetail> {
                                   fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             Text(
-                              car.idCar,
+                              car?.idCar ?? "",
                               style: const TextStyle(fontSize: 18),
                             )
                           ],
@@ -138,13 +161,13 @@ class _CarDetailState extends State<CarDetail> {
                                   fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             Text(
-                              car.statusLock == true
+                              car?.statusLock == true
                                   ? "Khoá xe"
                                   : "Đang hoạt động",
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: car.statusLock == true
+                                  color: car?.statusLock == true
                                       ? Colors.redAccent
                                       : Colors.greenAccent),
                             )
@@ -153,7 +176,7 @@ class _CarDetailState extends State<CarDetail> {
                         const SizedBox(
                           height: 10,
                         ),
-                        car.startUseTime != null
+                        car?.startUseTime != null
                             ? Row(
                                 children: [
                                   const Text(
@@ -163,7 +186,8 @@ class _CarDetailState extends State<CarDetail> {
                                         fontSize: 18),
                                   ),
                                   Text(
-                                    formatter.format(car.startUseTime!),
+                                    FormatDateIso()
+                                        .formatToString(car!.startUseTime!),
                                     style: const TextStyle(fontSize: 18),
                                   )
                                 ],
@@ -172,7 +196,7 @@ class _CarDetailState extends State<CarDetail> {
                         const SizedBox(
                           height: 10,
                         ),
-                        car.userId != null
+                        car?.userId != null
                             ? Row(
                                 children: [
                                   const Text(
@@ -182,9 +206,9 @@ class _CarDetailState extends State<CarDetail> {
                                         fontSize: 18),
                                   ),
                                   Text(
-                                    (car.userData != null &&
-                                            car.userData?.name != null)
-                                        ? car.userData!.name!
+                                    (car?.userData != null &&
+                                            car?.userData?.name != null)
+                                        ? car!.userData!.name!
                                         : "---",
                                     style: const TextStyle(fontSize: 18),
                                   )
@@ -198,16 +222,17 @@ class _CarDetailState extends State<CarDetail> {
                         OutlinedButtonWidget(
                           isFullWidth: true,
                           text: "Khoá xe",
-                          onPressed: () {},
+                          onPressed: _handleLock,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         ElevatedButtonWidget(
-                          isFullWidth: true,
-                          text: "Kết thúc chuyến đi",
-                          onPressed: () {},
-                        )
+                            isFullWidth: true,
+                            text: "Kết thúc chuyến đi",
+                            onPressed: () {
+                              _handleEnd();
+                            })
                       ],
                     )
                   ],

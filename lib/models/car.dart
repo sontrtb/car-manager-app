@@ -2,7 +2,7 @@ import 'package:car_manager_app/models/user.dart';
 
 class Car {
   Car({
-    required this.id,
+    this.id,
     required this.idCar,
     this.lat,
     this.lon,
@@ -13,14 +13,14 @@ class Car {
     this.userData,
   });
 
-  late int id;
+  late int? id;
   late String idCar;
   late double? lat;
   late double? lon;
   late int? userId;
   late bool? statusLock;
-  late DateTime? startUseTime;
-  late DateTime? endUseTime;
+  late String? startUseTime;
+  late String? endUseTime;
   late User? userData;
 
   factory Car.fromJson(Map<String, dynamic> json) {
@@ -31,6 +31,8 @@ class Car {
       idCar: json['idCar'],
       statusLock: json['statusLock'],
       userId: json['userId'],
+      startUseTime: json["startUseTime"],
+      endUseTime: json["endUseTime"],
       userData: json['userData'] == null
           ? null
           : User(
