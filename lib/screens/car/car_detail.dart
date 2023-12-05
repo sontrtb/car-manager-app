@@ -8,6 +8,7 @@ import 'package:car_manager_app/widgets/mqtt_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final formatter = DateFormat('hh:mm dd-MM-yyyy');
 
@@ -30,6 +31,7 @@ class CarDetail extends StatefulWidget {
 class _CarDetailState extends State<CarDetail> {
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   late Car? car;
+  String? role;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -37,15 +39,13 @@ class _CarDetailState extends State<CarDetail> {
   Future<void> _handleMessageMqtt(String mess) async {
     if (car == null || car?.idCar == null || !mounted) return;
 
-    Map<String, dynamic> response = jsonDecode(mess);
+    Map<String, dynamic>? response = jsonDecode(mess);
 
-    Car newCar = Car.fromJson(response);
-
-    if (response["idCar"] != car?.idCar) return;
+    if (response?["idCar"] != car?.idCar) return;
 
     final marker = Marker(
       markerId: MarkerId(car!.idCar),
-      position: LatLng(response['lat'] ?? 0, response['lon'] ?? 0),
+      position: LatLng(response?['lat'] ?? 0, response?['lon'] ?? 0),
       icon: await BitmapDescriptor.fromAssetImage(
           const ImageConfiguration(
             size: Size(15, 15),
@@ -54,16 +54,10 @@ class _CarDetailState extends State<CarDetail> {
     );
 
     setState(() {
-      if (response['statusLock'] != null) {
-        car?.statusLock = response['statusLock'].toString() == "true";
+      if (response?['statusLock'] != null) {
+        car?.statusLock = response?['statusLock'].toString() == "true";
       }
-      if (response['startUseTime'] != null) {
-        car?.startUseTime = newCar.startUseTime;
-      }
-      // if (response["userData"] != null) {
-      //   car?.userData = newCar.userData;
-      // }
-      if (response['lat'] != null && response['lon'] != null) {
+      if (response?['lat'] != null && response?['lon'] != null) {
         markers[MarkerId(car!.idCar)] = marker;
       }
     });
@@ -72,6 +66,13 @@ class _CarDetailState extends State<CarDetail> {
   Future<void> _loadData() async {
     setState(() {
       car = widget.initCar;
+    });
+  }
+
+  Future<void> _loadRoleUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role');
     });
   }
 
@@ -93,9 +94,11 @@ class _CarDetailState extends State<CarDetail> {
 
   @override
   void initState() {
+    _loadRoleUser();
     MqttHandler mqttHandler =
         MqttHandler(topic: "MQTT_ESP32/LED1", onMessage: _handleMessageMqtt);
     _loadData();
+
     mqttHandler.connect();
     super.initState();
   }
@@ -107,6 +110,7 @@ class _CarDetailState extends State<CarDetail> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Chi tiết xe"),
+          automaticallyImplyLeading: role == "admin",
         ),
         body: Column(
           children: [
@@ -221,18 +225,20 @@ class _CarDetailState extends State<CarDetail> {
                       children: [
                         OutlinedButtonWidget(
                           isFullWidth: true,
-                          text: "Khoá xe",
+                          text: car?.statusLock == true ? "Mở khoá" : "Khoá xe",
                           onPressed: _handleLock,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        ElevatedButtonWidget(
-                            isFullWidth: true,
-                            text: "Kết thúc chuyến đi",
-                            onPressed: () {
-                              _handleEnd();
-                            })
+                        role == "user"
+                            ? ElevatedButtonWidget(
+                                isFullWidth: true,
+                                text: "Kết thúc chuyến đi",
+                                onPressed: () {
+                                  _handleEnd();
+                                })
+                            : const SizedBox()
                       ],
                     )
                   ],

@@ -29,7 +29,7 @@ class _PayState extends State<Pay> {
       _isSending = true;
     });
 
-    await UserApi().pay(_hourBetween.toInt());
+    await UserApi().pay((_hourBetween * 40000).toInt());
     await CarApi().updateCar(widget.car.idCar, null);
 
     setState(() {
