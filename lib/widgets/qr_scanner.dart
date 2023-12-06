@@ -12,19 +12,17 @@ class QrSanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Expanded(
-          child: MobileScanner(
-            onDetect: (capture) {
-              if (isScannerSuccess) return;
-              final List<Barcode> barcodes = capture.barcodes;
-              for (final barcode in barcodes) {
-                if (barcode.rawValue != null) {
-                  onScanSuccess(barcode.rawValue!);
-                  isScannerSuccess = true;
-                }
+        MobileScanner(
+          onDetect: (capture) {
+            if (isScannerSuccess) return;
+            final List<Barcode> barcodes = capture.barcodes;
+            for (final barcode in barcodes) {
+              if (barcode.rawValue != null) {
+                onScanSuccess(barcode.rawValue!);
+                isScannerSuccess = true;
               }
-            },
-          ),
+            }
+          },
         ),
         const Positioned(
           top: 80,
