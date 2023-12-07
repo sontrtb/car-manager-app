@@ -1,3 +1,3 @@
 class Config {
-  String apiUrl = "http://192.168.20.104:3001/api/v1";
+  String apiUrl = "https://c24c-42-119-95-239.ngrok-free.app/api/v1";
 }
