@@ -102,7 +102,7 @@ class _LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        // obscureText: true,
+                        obscureText: true,
                         decoration: const InputDecoration(
                           label: Text("Mật khẩu"),
                         ),

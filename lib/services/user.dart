@@ -13,7 +13,6 @@ class UpdateUserLogin {
         "name": name,
         "address": address,
         "phoneNumber": phoneNumber,
-        "amountOfMoney": amountOfMoney,
       };
 }
 
